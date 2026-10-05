@@ -19,3 +19,10 @@ The standard Base32 alphabet (`A-Z2-7`) reorders digits and letters so that enco
 - Decode is case-insensitive and ignores trailing whitespace, because tokens are routinely copy-pasted and pick up stray characters.
 - Padding is validated for canonical length: a string that decodes to a 1-byte value must have exactly 6 `=` symbols. Inputs with non-canonical leftover bits (where the trailing zero bits implied by padding are not actually zero) are rejected.
 - Empty input is a valid, supported case: `encode(new Uint8Array(0))` returns `''`, and `decode('')` returns an empty `Uint8Array`.
+
+## Design notes
+
+The window stores values eagerly rather than keeping running aggregates. Running
+sums drift with floating point over long streams, and recomputing from a small
+buffer is cheap enough that the drift is not worth the speed.
+
